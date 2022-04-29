@@ -49,3 +49,12 @@ class User(UserMixin):
             return User.find(user_email)
         else:
             return user
+
+    @staticmethod
+    def delete(user_id):
+        mysql_db = conn_mysqldb()
+        db_cursor = mysql_db.cursor()
+        sql = "DELETE FROM user_info WHERE USER_ID = %d" % (user_id)
+        deleted = db_cursor.execute(sql)
+        mysql_db.commit()
+        return deleted

@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, jsonify, request, render_template, redirect, url_for
-from flask_login import login_user, current_user
+from flask_login import login_user, current_user, logout_user
 from blog_control.user_mgmt import User
+import datetime
 
 blog_abtest = Blueprint('blog', __name__)
 
@@ -12,7 +13,8 @@ def set_email():
     else:
         user_email = request.form['user_email']
         user = User.create(user_email, 'A')
-        login_user(user)
+        login_user(user, remember=True, duration=datetime.timedelta(days=365))
+        # login_user(user)
 
         return redirect(url_for('blog.test_blog'))
         # content-type : application/x-www-form-urlencoded ---> html form 'POST'
@@ -36,3 +38,10 @@ def test_blog():
         return render_template('blog_A.html', user_email=current_user.user_email)
     else:
         return render_template('blog_A.html')
+
+
+@blog_abtest.route('/logout')
+def logout():
+    User.delete(current_user.id)
+    logout_user()
+    return redirect(url_for('blog.test_blog'))
