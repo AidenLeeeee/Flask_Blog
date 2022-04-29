@@ -320,4 +320,7 @@ pip-selfcheck.json
 # Ignore code-workspaces
 *.code-workspace
 
+# MySQL AWS
+mysql.py
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python,flask,venv
