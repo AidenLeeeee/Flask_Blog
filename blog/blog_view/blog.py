@@ -13,7 +13,8 @@ def set_email():
         return redirect(url_for('blog.blog_test'))
     else:
         user_email = request.form['user_email']
-        user = User.create(user_email, 'A')
+        blog_id = request.form['blog_id']
+        user = User.create(user_email, blog_id)
         login_user(user, remember=True, duration=datetime.timedelta(days=365))
         # login_user(user)
 
@@ -33,11 +34,12 @@ def set_email():
 
 @blog_abtest.route('/blog_test')
 def blog_test():
-    BlogSession.get_blog_page()
     if current_user.is_authenticated:
     # current_user.is_authenticated 호출 시, login_manager.user_loader 의 load_user() 실행
     # load_user() 는 User.get() 함수의 리턴값을 반환하고 current_user 에 담는다.
-        return render_template('blog_A.html', user_email=current_user.user_email)
+        webpage_name = BlogSession.get_blog_page(current_user.blog_id)
+        BlogSession.save_session_info(session['client_id'], current_user.user_email, webpage_name)
+        return render_template(webpage_name, user_email=current_user.user_email)
     else:
         webpage_name = BlogSession.get_blog_page()
         BlogSession.save_session_info(session['client_id'], 'anonymous', webpage_name)
